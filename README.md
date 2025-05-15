@@ -6,7 +6,7 @@ Main
 ## Features
 =======
 # Node Version Manager [![Build Status](https://app.travis-ci.com/nvm-sh/nvm.svg?branch=master)][3] [![nvm version](https://img.shields.io/badge/version-v0.40.3-yellow.svg)][4] [![CII Best Practices](https://bestpractices.dev/projects/684/badge)](https://bestpractices.dev/projects/684)
-codespace-expert-waddle-4v7jxg56v7xf7qr5
+codespace-expert-waddle
 
 - **Install**: Install any Node.js version from the command line.
 - **Use**: Easily switch between multiple Node.js versions.
