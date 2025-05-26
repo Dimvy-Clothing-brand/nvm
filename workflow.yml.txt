@@ -1,6 +1,6 @@
 jobs:
   example-job:
-    runs-on: windows-latest
+    runs-on: windows-latest-1
     steps:
       - name: Check out code
         uses: actions/checkout@v3
