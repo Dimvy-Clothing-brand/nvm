@@ -60,4 +60,4 @@ To use NVM, follow these commands:
     nvm uninstall <version>
     ```
 
-For more detailed usage instructions, refer ▋
+For more detailed usage instructions, refer to the [official documentation](https://github.com/nodoubtz/nvm#usage).
