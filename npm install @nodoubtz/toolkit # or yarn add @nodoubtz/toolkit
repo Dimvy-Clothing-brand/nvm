@@ -1,0 +1,13 @@
+import { configure, execute, secure, manage } from '@nodoubtz/toolkit';
+
+// Example: Configure a project
+const config = configure({ env: 'production' });
+
+// Example: Run a task
+execute('build', config);
+
+// Example: Hide vulnerable code
+secure.hideSecrets();
+
+// Example: Manage duplicates
+manage.findAndFixDuplicates();
