@@ -129,3 +129,25 @@ jobs:
 - `workflow_dispatch`: Allows you to manually trigger the workflow from the GitHub UI.
 
 You can customize these workflows and events to fit your development process.
+
+## Requirements
+
+- Docker (for containerized development)
+- GNU Make (for Makefile tools)
+- Node.js and npm (if running locally, managed via nvm)
+- Bash, Zsh, Dash, or Sh (for shell compatibility)
+- Git (for version control)
+
+## Security
+
+If you discover a security vulnerability, please report it by opening an issue or contacting the maintainers directly. We encourage responsible disclosure and will address issues promptly.
+
+- Do not share sensitive information in public issues.
+- Keep dependencies up to date.
+- Review and follow best practices for shell scripting and Node.js security.
+
+## Billing / Billable Work
+
+This project includes billable work. Please ensure all time and contributions are tracked appropriately. If you are working on this project as a paid contributor, submit your hours and deliverables according to the agreed process to ensure timely payment.
+
+For questions about billing or compensation, contact the project owner or your manager.
