@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Bash in Docker Container",
+      "type": "docker",
+      "request": "launch",
+      "platform": "node",
+      "dockerRun": {
+        "image": "nvm-dev",
+        "containerName": "nvm-dev-launch",
+        "command": "/bin/bash",
+        "tty": true,
+        "remove": true,
+        "env": {},
+        "volumes": [
+          {
+            "localPath": "${workspaceFolder}",
+            "containerPath": "/workspace"
+          }
+        ],
+        "workingDirectory": "/workspace"
+      }
+    }
+  ]
+}

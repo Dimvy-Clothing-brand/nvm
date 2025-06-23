@@ -1,0 +1,13 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run nvm-dev Docker Container",
+            "type": "shell",
+            "command": "docker run --rm -it -v \"${workspaceFolder}\":/workspace -w /workspace nvm-dev",
+            "problemMatcher": [],
+            "detail": "Run an interactive shell in the nvm-dev Docker container."
+        }
+    ]
+}

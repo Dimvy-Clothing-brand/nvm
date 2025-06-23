@@ -1,4 +1,17 @@
 {
-  "image": "mcr.microsoft.com/devcontainers/universal:2",
-  "features": {}
+  "name": "NVM Dev Container",
+  "build": {
+    "dockerfile": "../Dockerfile"
+  },
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.vscode-node-azure-pack",
+        "dbaeumer.vscode-eslint"
+      ],
+      "settings": {}
+    }
+  },
+  "postCreateCommand": "npm install || true"
 }
