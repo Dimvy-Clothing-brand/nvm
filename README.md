@@ -61,3 +61,36 @@ To use NVM, follow these commands:
     ```
 
 For more detailed usage instructions, refer to the [official documentation](https://github.com/nodoubtz/nvm#usage).
+
+## Docker: Building and Running the Container
+
+This project provides a Dockerfile for a development environment based on Ubuntu and Node.js (via nvm).
+
+### Build the Docker Image
+
+```sh
+# From the project root directory:
+docker build -t nvm-dev .
+```
+
+### Run the Container Interactively
+
+```sh
+docker run --rm -it nvm-dev
+```
+
+This will drop you into a bash shell as the `nvm` user, with nvm and Node.js available.
+
+### Run a Node.js Command in the Container
+
+```sh
+docker run --rm -it nvm-dev node --version
+```
+
+You can also mount your local project directory for development:
+
+```sh
+docker run --rm -it -v "$PWD":/workspace -w /workspace nvm-dev
+```
+
+The Dockerfile is based on `ubuntu:22.04` and installs Node.js using nvm for maximum compatibility.
