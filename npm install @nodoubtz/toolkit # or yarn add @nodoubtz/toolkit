@@ -10,4 +10,4 @@ execute('build', config);
 secure.hideSecrets();
 
 // Example: Manage duplicates
-manage.findAndFixDuplicates();
+manage.findAndFixDuplicates()
