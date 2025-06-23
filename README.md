@@ -94,3 +94,38 @@ docker run --rm -it -v "$PWD":/workspace -w /workspace nvm-dev
 ```
 
 The Dockerfile is based on `ubuntu:22.04` and installs Node.js using nvm for maximum compatibility.
+
+## GitHub Actions and Events
+
+You can automate building, testing, and other workflows for this project using GitHub Actions. Below is an example workflow configuration and a list of common events that can trigger these actions.
+
+### Example Workflow: Build and Test
+
+Create a file at `.github/workflows/ci.yml` with the following content:
+
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        run: docker build -t nvm-dev .
+      - name: Run tests in container
+        run: docker run --rm nvm-dev bash -c "npm test || true"
+```
+
+### Common Events
+- `push`: Triggered when you push commits to a branch.
+- `pull_request`: Triggered when a pull request is opened or updated.
+- `workflow_dispatch`: Allows you to manually trigger the workflow from the GitHub UI.
+
+You can customize these workflows and events to fit your development process.
