@@ -30,8 +30,7 @@ jobs:
       - name: Harden Runner
         uses: step-security/harden-runner@v2
         with:
-          allowed-endpoints:
-            ghcr.io:443
+          allowed-endpoints: ghcr.io:443
             github.com:443
             pkg-containers.githubusercontent.com:443
             formulae.brew.sh:443
@@ -48,9 +47,9 @@ jobs:
         run: shellcheck -s ${{ matrix.shell }} ${{ matrix.file }}
 
   shellcheck:
-      permissions:
-        contents: none
-      needs: [shellcheck_matrix]
-      runs-on: ubuntu-latest
-      steps:
-        - run: true
+    permissions:
+      contents: none
+    needs: [shellcheck_matrix]
+    runs-on: ubuntu-latest
+    steps:
+      - run: true

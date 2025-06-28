@@ -10,7 +10,7 @@ jobs:
     permissions:
       contents: write
 
-    name: "tests"
+    name: 'tests'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -44,8 +44,7 @@ jobs:
       - name: Harden Runner
         uses: step-security/harden-runner@v2
         with:
-          allowed-endpoints:
-            github.com:443
+          allowed-endpoints: github.com:443
             registry.npmjs.org:443
             raw.githubusercontent.com:443
             nodejs.org:443

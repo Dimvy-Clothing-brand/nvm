@@ -42,8 +42,8 @@ Section Intentionally Left Blank
 
 ## Section 5: Definitions
 
-  - *Contributors*: contribute code or other artifacts, but do not have the right to commit to the codebase. Contributors work with the project’s maintainers to have code committed to the code base. A Contributor may be promoted to a Maintainer by the Maintainers. Contributors should rarely be encumbered by the Maintainers and never by the CPC or OpenJS Foundation Board.
+- _Contributors_: contribute code or other artifacts, but do not have the right to commit to the codebase. Contributors work with the project’s maintainers to have code committed to the code base. A Contributor may be promoted to a Maintainer by the Maintainers. Contributors should rarely be encumbered by the Maintainers and never by the CPC or OpenJS Foundation Board.
 
-  - *Maintainers*: Contributors with any kind of decision-making authority in the project.
+- _Maintainers_: Contributors with any kind of decision-making authority in the project.
 
 [openjs foundation]: https://openjsf.org

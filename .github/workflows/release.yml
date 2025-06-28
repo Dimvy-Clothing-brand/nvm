@@ -12,8 +12,7 @@ jobs:
       - name: Harden Runner
         uses: step-security/harden-runner@v2
         with:
-          allowed-endpoints:
-            github.com:443
+          allowed-endpoints: github.com:443
             api.github.com:443
             objects.githubusercontent.com:443
             raw.githubusercontent.com:443
@@ -23,7 +22,7 @@ jobs:
           fetch-tags: true
       - uses: actions/setup-node@v4
         with:
-          node-version: "14"
+          node-version: '14'
       - run: npm install
       - name: Configure git
         run: |

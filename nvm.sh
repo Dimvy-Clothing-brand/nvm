@@ -3124,6 +3124,7 @@ nvm() {
         nvm_echo '    --silent                                  Silences stdout/stderr output when a version is omitted'
         nvm_echo '  nvm cache dir                               Display path to the cache directory for nvm'
         nvm_echo '  nvm cache clear                             Empty cache directory for nvm'
+        nvm_echo '  nvm ai [command]                            🧠 AI-powered Node.js management (run "nvm ai help" for details)'
         nvm_echo '  nvm set-colors [<color codes>]              Set five text colors using format "yMeBg". Available when supported.'
         nvm_echo '                                               Initial colors are:'
         nvm_echo_with_colors "                                                  $(nvm_wrap_with_color_code 'b' 'b')$(nvm_wrap_with_color_code 'y' 'y')$(nvm_wrap_with_color_code 'g' 'g')$(nvm_wrap_with_color_code 'r' 'r')$(nvm_wrap_with_color_code 'e' 'e')"
@@ -4500,6 +4501,17 @@ nvm() {
         >&2 nvm --help
         nvm_echo
         nvm_err_with_colors "\033[1;37mPlease pass in five \033[1;31mvalid color codes\033[1;37m. Choose from: rRgGbBcCyYmMkKeW\033[0m"
+      fi
+    ;;
+    "ai")
+      # Source the AI extension if it exists
+      if [ -f "${NVM_DIR}/nvm-ai.sh" ]; then
+        . "${NVM_DIR}/nvm-ai.sh"
+        nvm_ai "$@"
+      else
+        nvm_err "NVM AI extension not found at ${NVM_DIR}/nvm-ai.sh"
+        nvm_err "Please ensure nvm-ai.sh is properly installed."
+        return 1
       fi
     ;;
     *)

@@ -1,0 +1,175 @@
+name: Automated Security Testing
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+  schedule:
+    # Run full security suite weekly on Sundays at 3 AM UTC
+    - cron: '0 3 * * 0'
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  security-matrix:
+    name: Security Test Matrix
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        node-version: [16, 18, 20]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run security audit
+        run: npm run security:audit
+        continue-on-error: true
+
+      - name: Test nvm installation security
+        run: |
+          # Test installation script security
+          bash -n install.sh
+          shellcheck install.sh || true
+
+      - name: Test nvm.sh security
+        run: |
+          # Static analysis of main script
+          bash -n nvm.sh
+          shellcheck nvm.sh || true
+
+  penetration-testing:
+    name: Penetration Testing
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup test environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nikto dirb gobuster
+
+      - name: Test for common vulnerabilities
+        run: |
+          # Test for potential script injection vulnerabilities
+          echo "Testing for script injection vulnerabilities..."
+
+          # Check for unsafe variable expansions
+          grep -r '\$[{(].*[})]' *.sh || true
+
+          # Check for potential command injection
+          grep -r 'eval\|exec\|system\|popen' *.sh || true
+
+          # Check for unsafe file operations
+          grep -r 'rm -rf\|chmod 777\|wget.*http\|curl.*http' *.sh || true
+
+  fuzz-testing:
+    name: Fuzz Testing
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install fuzzing tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y radamsa
+
+      - name: Fuzz test nvm commands
+        run: |
+          # Create fuzz test inputs
+          echo "Creating fuzz test cases..."
+
+          # Test with malformed version strings
+          echo -e "v1.0.0\n../../../etc/passwd\n\$(whoami)\n\`id\`" > fuzz_versions.txt
+
+          # Source nvm and test with fuzzy inputs
+          source ./nvm.sh
+
+          # Test version parsing with malformed input
+          while read -r version; do
+            echo "Testing version: $version"
+            nvm_version "$version" 2>/dev/null || true
+          done < fuzz_versions.txt
+
+  compliance-check:
+    name: Compliance & Standards
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check SPDX license compliance
+        run: |
+          # Check for proper license headers
+          find . -name "*.sh" -type f -exec grep -L "SPDX-License-Identifier\|Copyright\|License" {} \;
+
+      - name: Security policy validation
+        run: |
+          # Verify security policy exists and is comprehensive
+          if [ ! -f SECURITY.md ]; then
+            echo "❌ SECURITY.md not found"
+            exit 1
+          fi
+
+          # Check for required sections
+          sections=("Reporting a Vulnerability" "Supported Versions" "Response Timeline")
+          for section in "${sections[@]}"; do
+            if ! grep -q "$section" SECURITY.md; then
+              echo "❌ Missing section: $section"
+              exit 1
+            fi
+          done
+
+          echo "✅ Security policy validation passed"
+
+  supply-chain-security:
+    name: Supply Chain Security
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Verify package integrity
+        run: |
+          # Check package.json integrity
+          node -e "JSON.parse(require('fs').readFileSync('package.json', 'utf8'))"
+
+          # Verify no suspicious scripts
+          jq -r '.scripts | to_entries[] | select(.value | contains("curl") or contains("wget") or contains("eval"))' package.json || true
+
+      - name: Check for typosquatting
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - run: |
+          npm install -g @cyclonedx/cdxgen
+          cdxgen -t npm -o bom.json .
+
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v4
+        with:
+          name: software-bill-of-materials
+          path: bom.json

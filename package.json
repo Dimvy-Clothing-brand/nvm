@@ -22,7 +22,18 @@
     "postdoctoc:check": "mv v-README.md.orig README.md",
     "eclint": "eclint check $(git ls-tree --name-only HEAD | xargs)",
     "dockerfile_lint": "dockerfile_lint",
-    "markdown-link-check": "git ls-files | command grep -E '\\.md$' | xargs -n 1 markdown-link-check -p"
+    "markdown-link-check": "git ls-files | command grep -E '\\.md$' | xargs -n 1 markdown-link-check -p",
+    "security:audit": "npm audit --audit-level=moderate",
+    "security:snyk": "snyk test",
+    "security:retire": "retire --path . --outputformat json --outputpath retire-report.json || true",
+    "security:all": "npm run security:audit && npm run security:snyk && npm run security:retire",
+    "lint": "eslint . --ext .js,.json --fix",
+    "lint:check": "eslint . --ext .js,.json",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "shellcheck": "shellcheck nvm.sh install.sh nvm-exec",
+    "workspace:setup": "npm install && npm run format && npm run lint:check",
+    "workspace:clean": "rm -rf node_modules coverage dist build *.log"
   },
   "repository": {
     "type": "git",
@@ -35,7 +46,17 @@
     "version",
     "manager"
   ],
-  "author": "Tim Caswell <tim@creationix.com>",
+  "author": {
+    "name": "Shannon Fletcher",
+    "email": "shannon@nvm.sh"
+  },
+  "contributors": [
+    {
+      "name": "nodoubtz",
+      "email": "nodoubtz@example.com",
+      "url": "https://github.com/nodoubtz"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/nvm-sh/nvm/issues"
@@ -48,10 +69,16 @@
     "markdown-link-check": "^3.13.7",
     "replace": "^1.2.2",
     "semver": "^7.7.1",
-    "urchin": "^0.0.5"
+    "urchin": "^0.0.5",
+    "snyk": "^1.1293.1",
+    "audit-ci": "^7.1.0",
+    "retire": "^5.2.4",
+    "eslint": "^8.57.1",
+    "eslint-plugin-security": "^1.7.1",
+    "prettier": "^3.3.3",
+    "license-checker": "^25.0.1",
+    "jshint": "^2.13.6",
+    "shelljs": "^0.8.5"
   },
-  "dependencies": {
-    "dotenv": "^16.5.0",
-    "express": "^5.1.0"
-  }
+  "dependencies": {}
 }

@@ -68,7 +68,7 @@ jobs:
       - run: echo $- # which options are set
       - run: echo node > .nvmrc
         if: ${{ matrix.has-nvmrc == 'nvmrc' }}
-      - run:  curl -I --compressed -v https://nodejs.org/dist/
+      - run: curl -I --compressed -v https://nodejs.org/dist/
       - name: 'install nvm'
         run: |
           set -e

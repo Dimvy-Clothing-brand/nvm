@@ -95,7 +95,7 @@ jobs:
     name: 'WSL nvm install'
     defaults:
       run:
-          shell: wsl-bash {0}
+        shell: wsl-bash {0}
     runs-on: windows-latest
     env:
       WSLENV: NVM_INSTALL_GITHUB_REPO:NVM_INSTALL_VERSION:/p
@@ -104,7 +104,7 @@ jobs:
       matrix:
         wsl-distrib:
           - Debian
-        # - Alpine # fails
+          # - Alpine # fails
           - Ubuntu-20.04
           - Ubuntu-18.04
         npm-node-version:
@@ -146,7 +146,7 @@ jobs:
     name: 'WSL nvm install'
     defaults:
       run:
-          shell: wsl-bash {0}
+        shell: wsl-bash {0}
     runs-on: windows-latest
     env:
       WSLENV: NVM_INSTALL_GITHUB_REPO:NVM_INSTALL_VERSION:/p

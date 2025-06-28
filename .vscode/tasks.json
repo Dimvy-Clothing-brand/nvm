@@ -1,13 +1,156 @@
 {
-    // See https://go.microsoft.com/fwlink/?LinkId=733558
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Run nvm-dev Docker Container",
-            "type": "shell",
-            "command": "docker run --rm -it -v \"${workspaceFolder}\":/workspace -w /workspace nvm-dev",
-            "problemMatcher": [],
-            "detail": "Run an interactive shell in the nvm-dev Docker container."
-        }
-    ]
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run nvm-dev Docker Container",
+      "type": "shell",
+      "command": "docker run --rm -it -v \"${workspaceFolder}\":/workspace -w /workspace nvm-dev",
+      "problemMatcher": [],
+      "detail": "Run an interactive shell in the nvm-dev Docker container."
+    },
+    {
+      "label": "Setup Workspace",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "workspace:setup"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": ["$eslint-stylish"],
+      "detail": "Install dependencies, format code, and run linting"
+    },
+    {
+      "label": "Install Dependencies",
+      "type": "shell",
+      "command": "npm",
+      "args": ["install"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "detail": "Install all npm dependencies"
+    },
+    {
+      "label": "Run All Tests",
+      "type": "shell",
+      "command": "npm",
+      "args": ["test"],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "detail": "Run all test suites"
+    },
+    {
+      "label": "Security Audit All",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "security:all"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "detail": "Run all security audits including npm audit, snyk, and retire"
+    },
+    {
+      "label": "Format Code",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "format"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "detail": "Format all code using Prettier"
+    },
+    {
+      "label": "Lint Code",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "lint"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": ["$eslint-stylish"],
+      "detail": "Run ESLint and fix issues"
+    },
+    {
+      "label": "ShellCheck Analysis",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "shellcheck"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "detail": "Run ShellCheck on shell scripts"
+    },
+    {
+      "label": "Test NVM Installation",
+      "type": "shell",
+      "command": "bash",
+      "args": ["install.sh"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "Test the NVM installation script"
+    },
+    {
+      "label": "Source NVM and Test",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-c", "source ./nvm.sh && nvm --version"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "detail": "Source NVM script and test basic functionality"
+    }
+  ]
 }

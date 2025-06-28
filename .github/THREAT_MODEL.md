@@ -10,17 +10,19 @@ The aim of this section is to facilitate the identification of potential securit
 ## Relevant assets and threat actors
 
 The following assets are considered important for the `nvm` project:
-  - `nvm` source code and project documentation
-  - Underlying `nvm` dependencies
-  - `nvm` development infrastructure
-  - `nvm` installed devices including servers
+
+- `nvm` source code and project documentation
+- Underlying `nvm` dependencies
+- `nvm` development infrastructure
+- `nvm` installed devices including servers
 
 The following threat actors are considered relevant to the `nvm` application:
-  - External malicious attackers
-  - Internal malicious attackers
-  - Services
-  - Malicious insider actors
-  - Third-party libraries
+
+- External malicious attackers
+- Internal malicious attackers
+- Services
+- Malicious insider actors
+- Third-party libraries
 
 ## Attack surface for external/internal attackers and services
 

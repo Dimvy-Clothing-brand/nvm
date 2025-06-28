@@ -2,55 +2,48 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "(gdb) Pipe Launch",
-      "type": "cppdbg",
-      "request": "launch",
-      "program": "enter program name, for example ${workspaceFolder}/a.out",
-      "args": [],
-      "stopAtEntry": false,
-      "cwd": "${fileDirname}",
-      "environment": [],
-      "externalConsole": false,
-      "pipeTransport": {
-        "debuggerPath": "/usr/bin/gdb",
-        "pipeProgram": "/usr/bin/ssh",
-        "pipeArgs": [],
-        "pipeCwd": ""
-      },
-      "MIMode": "gdb",
-      "setupCommands": [
-          {
-              "description": "Enable pretty-printing for gdb",
-              "text": "-enable-pretty-printing",
-              "ignoreFailures": true
-          },
-          {
-              "description": "Set Disassembly Flavor to Intel",
-              "text": "-gdb-set disassembly-flavor intel",
-              "ignoreFailures": true
-          }
-      ]
-    },
-    {
       "name": "Run Bash in Docker Container",
       "type": "docker",
       "request": "launch",
       "platform": "node",
-      "dockerRun": {
-        "image": "nvm-dev",
-        "containerName": "nvm-dev-launch",
-        "command": "/bin/bash",
-        "tty": true,
-        "remove": true,
-        "env": {},
-        "volumes": [
-          {
-            "localPath": "${workspaceFolder}",
-            "containerPath": "/workspace"
-          }
-        ],
-        "workingDirectory": "/workspace"
+      "containerName": "nvm-dev-launch"
+    },
+    {
+      "name": "Test NVM Installation",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/test/runner.js",
+      "console": "integratedTerminal",
+      "env": {
+        "NODE_ENV": "test",
+        "NVM_DIR": "${workspaceFolder}"
+      },
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Debug Shell Script",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/debug-helper.js",
+      "console": "integratedTerminal",
+      "env": {
+        "SCRIPT_TO_DEBUG": "${input:scriptPath}",
+        "DEBUG_ARGS": "${input:scriptArgs}"
       }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "scriptPath",
+      "description": "Path to shell script to debug",
+      "default": "nvm.sh",
+      "type": "promptString"
+    },
+    {
+      "id": "scriptArgs",
+      "description": "Arguments for the script",
+      "default": "--version",
+      "type": "promptString"
     }
   ]
 }

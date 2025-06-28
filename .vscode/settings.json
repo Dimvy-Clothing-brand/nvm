@@ -1,0 +1,64 @@
+{
+  "typescript.preferences.includePackageJsonAutoImports": "off",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "files.associations": {
+    "*.sh": "shellscript",
+    "nvm": "shellscript",
+    "nvm-exec": "shellscript",
+    "install.sh": "shellscript",
+    "bash_completion": "shellscript"
+  },
+  "shellcheck.enable": true,
+  "shellcheck.executablePath": "shellcheck",
+  "shellcheck.run": "onSave",
+  "shellcheck.exclude": ["SC1091", "SC2039"],
+  "eslint.workingDirectories": ["."],
+  "eslint.validate": ["javascript", "json"],
+  "prettier.requireConfig": true,
+  "prettier.configPath": ".prettierrc.json",
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/coverage": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/*.log": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/coverage": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.git": true
+  },
+  "files.watcherExclude": {
+    "**/node_modules": true,
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/coverage/**": true,
+    "**/dist/**": true,
+    "**/build/**": true
+  },
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.profiles.linux": {
+    "bash": {
+      "path": "bash",
+      "args": ["-l"]
+    }
+  },
+  "git.ignoreLimitWarning": true,
+  "markdown.validate.enabled": true,
+  "yaml.validate": true,
+  "yaml.completion": true,
+  "yaml.hover": true,
+  "json.validate.enable": true,
+  "workbench.editor.enablePreview": false,
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+  "security.workspace.trust.enabled": true,
+  "extensions.ignoreRecommendations": false
+}

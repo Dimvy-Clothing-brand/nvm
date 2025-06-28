@@ -3,62 +3,72 @@
 Node Version Manager (NVM) is a POSIX-compliant bash script to manage multiple active node.js versions.
 
 ## Table of Contents
+
 - [Introduction](#introduction)
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Introduction
+
 NVM allows you to install and switch between multiple versions of Node.js. This is particularly useful for testing and developing applications that rely on different Node.js versions.
 
 ## Features
+
 - Install and manage multiple Node.js versions.
 - Switch between different Node.js versions seamlessly.
 - List installed Node.js versions.
 - Remove Node.js versions that are no longer needed.
 
 ## Installation
+
 To install NVM, follow these steps:
 
 1. Clone the repository:
-    ```sh
-    git clone https://github.com/nodoubtz/nvm.git
-    ```
+
+   ```sh
+   git clone https://github.com/nodoubtz/nvm.git
+   ```
 
 2. Navigate to the project directory:
-    ```sh
-    cd nvm
-    ```
+
+   ```sh
+   cd nvm
+   ```
 
 3. Run the installation script:
-    ```sh
-    ./install.sh
-    ```
+
+   ```sh
+   ./install.sh
+   ```
 
 ## Usage
+
 To use NVM, follow these commands:
 
 - **Install a specific Node.js version:**
-    ```sh
-    nvm install <version>
-    ```
+
+  ```sh
+  nvm install <version>
+  ```
 
 - **Switch to a specific Node.js version:**
-    ```sh
-    nvm use <version>
-    ```
+
+  ```sh
+  nvm use <version>
+  ```
 
 - **List installed Node.js versions:**
-    ```sh
-    nvm list
-    ```
+
+  ```sh
+  nvm list
+  ```
 
 - **Remove a specific Node.js version:**
-    ```sh
-    nvm uninstall <version>
-    ```
+
+  ```sh
+  nvm uninstall <version>
+  ```
 
 For more detailed usage instructions, refer to the [official documentation](https://github.com/nodoubtz/nvm#usage).
 
@@ -108,9 +118,9 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -124,6 +134,7 @@ jobs:
 ```
 
 ### Common Events
+
 - `push`: Triggered when you push commits to a branch.
 - `pull_request`: Triggered when a pull request is opened or updated.
 - `workflow_dispatch`: Allows you to manually trigger the workflow from the GitHub UI.

@@ -1,0 +1,15 @@
+# Global code owners
+* @nodoubtz
+
+# AI Features specific ownership
+AI_FEATURES.md @nodoubtz
+nvm-ai.sh @nodoubtz
+demo-ai.sh @nodoubtz
+test-ai.sh @nodoubtz
+
+# Documentation ownership
+*.md @nodoubtz
+
+# Security implementation
+SECURITY*.md @nodoubtz
+.github/SECURITY.md @nodoubtz

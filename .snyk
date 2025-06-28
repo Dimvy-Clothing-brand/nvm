@@ -1,0 +1,24 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.0
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch: {}
+
+# Security settings
+language-settings:
+  javascript:
+    # Monitor for vulnerabilities in dependencies
+    enableLicenseViolations: true
+    # High severity threshold
+    severity-threshold: high
+    
+# Exclude test files from security scanning
+exclude:
+  global:
+    - "test/**"
+    - "**/test/**"
+    - "**/*.test.js"
+    - "**/*.spec.js"
+    - "**/mocks/**"
+    - "**/fixtures/**"
