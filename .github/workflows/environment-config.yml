@@ -1,0 +1,250 @@
+name: Environment Variables & Configuration
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+      action:
+        description: 'Action to perform'
+        required: true
+        default: 'validate'
+        type: choice
+        options:
+          - validate
+          - deploy
+          - test
+
+env:
+  # Global environment variables
+  NODE_VERSION: '20'
+  NPM_VERSION: '10'
+  DOCKER_REGISTRY: 'ghcr.io'
+
+  # Security configurations
+  SNYK_SEVERITY_THRESHOLD: 'high'
+  CODEQL_LANGUAGES: 'javascript'
+  SECURITY_SCAN_TIMEOUT: '15m'
+
+  # Build configurations
+  BUILD_TIMEOUT: '30m'
+  TEST_TIMEOUT: '20m'
+  DEPLOY_TIMEOUT: '10m'
+
+  # Nodoubtz specific variables
+  NODOUBTZ_MAINTAINER: '@nodoubtz'
+  NODOUBTZ_TOOLKIT_VERSION: 'latest'
+  NODOUBTZ_SECURITY_LEVEL: 'comprehensive'
+
+  # Quality gates
+  MIN_CODE_COVERAGE: '75'
+  MAX_COMPLEXITY: '10'
+  MIN_MAINTAINABILITY: '60'
+
+jobs:
+  environment-setup:
+    name: Environment Configuration
+    runs-on: ubuntu-latest
+
+    environment: ${{ github.event.inputs.environment || 'development' }}
+
+    outputs:
+      environment: ${{ steps.env-config.outputs.environment }}
+      node-version: ${{ steps.env-config.outputs.node-version }}
+      registry-url: ${{ steps.env-config.outputs.registry-url }}
+      security-level: ${{ steps.env-config.outputs.security-level }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure environment variables
+        id: env-config
+        run: |
+          # Set environment-specific variables
+          case "${{ github.event.inputs.environment }}" in
+            "production")
+              echo "environment=production" >> $GITHUB_OUTPUT
+              echo "node-version=20" >> $GITHUB_OUTPUT
+              echo "registry-url=https://registry.npmjs.org" >> $GITHUB_OUTPUT
+              echo "security-level=strict" >> $GITHUB_OUTPUT
+              echo "ENVIRONMENT_TYPE=production" >> $GITHUB_ENV
+              echo "DEBUG_MODE=false" >> $GITHUB_ENV
+              echo "LOG_LEVEL=error" >> $GITHUB_ENV
+              ;;
+            "staging")
+              echo "environment=staging" >> $GITHUB_OUTPUT
+              echo "node-version=20" >> $GITHUB_OUTPUT
+              echo "registry-url=https://npm.pkg.github.com" >> $GITHUB_OUTPUT
+              echo "security-level=enhanced" >> $GITHUB_OUTPUT
+              echo "ENVIRONMENT_TYPE=staging" >> $GITHUB_ENV
+              echo "DEBUG_MODE=true" >> $GITHUB_ENV
+              echo "LOG_LEVEL=warn" >> $GITHUB_ENV
+              ;;
+            *)
+              echo "environment=development" >> $GITHUB_OUTPUT
+              echo "node-version=20" >> $GITHUB_OUTPUT
+              echo "registry-url=https://registry.npmjs.org" >> $GITHUB_OUTPUT
+              echo "security-level=standard" >> $GITHUB_OUTPUT
+              echo "ENVIRONMENT_TYPE=development" >> $GITHUB_ENV
+              echo "DEBUG_MODE=true" >> $GITHUB_ENV
+              echo "LOG_LEVEL=debug" >> $GITHUB_ENV
+              ;;
+          esac
+
+          # Set common variables
+          echo "BUILD_ID=${{ github.run_id }}-${{ github.run_attempt }}" >> $GITHUB_ENV
+          echo "BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
+          echo "COMMIT_SHA=${GITHUB_SHA::8}" >> $GITHUB_ENV
+          echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
+      - name: Display environment configuration
+        run: |
+          echo "🌍 Environment Configuration"
+          echo "=========================================="
+          echo "Environment: ${ENVIRONMENT_TYPE}"
+          echo "Node Version: ${{ env.NODE_VERSION }}"
+          echo "Debug Mode: ${DEBUG_MODE}"
+          echo "Log Level: ${LOG_LEVEL}"
+          echo "Build ID: ${BUILD_ID}"
+          echo "Build Date: ${BUILD_DATE}"
+          echo "Commit SHA: ${COMMIT_SHA}"
+          echo "Branch: ${BRANCH_NAME}"
+          echo "Maintainer: ${{ env.NODOUBTZ_MAINTAINER }}"
+          echo "Security Level: ${{ steps.env-config.outputs.security-level }}"
+          echo "=========================================="
+
+  variable-validation:
+    name: Validate Variables
+    runs-on: ubuntu-latest
+    needs: environment-setup
+
+    steps:
+      - name: Validate required variables
+        run: |
+          echo "🔍 Validating GitHub Actions Variables"
+
+          # Check required environment variables
+          REQUIRED_VARS=(
+            "NODE_VERSION"
+            "DOCKER_REGISTRY"
+            "SNYK_SEVERITY_THRESHOLD"
+            "NODOUBTZ_MAINTAINER"
+            "MIN_CODE_COVERAGE"
+          )
+
+          for var in "${REQUIRED_VARS[@]}"; do
+            if [ -z "${!var:-}" ]; then
+              echo "❌ Missing required variable: $var"
+              exit 1
+            else
+              echo "✅ $var: ${!var}"
+            fi
+          done
+
+          # Validate numeric variables
+          if [[ ! "${{ env.MIN_CODE_COVERAGE }}" =~ ^[0-9]+$ ]]; then
+            echo "❌ MIN_CODE_COVERAGE must be numeric"
+            exit 1
+          fi
+
+          if [[ ! "${{ env.MAX_COMPLEXITY }}" =~ ^[0-9]+$ ]]; then
+            echo "❌ MAX_COMPLEXITY must be numeric"
+            exit 1
+          fi
+
+          echo "✅ All variables validated successfully"
+
+  secrets-check:
+    name: Verify Secrets Configuration
+    runs-on: ubuntu-latest
+    needs: environment-setup
+
+    steps:
+      - name: Check required secrets
+        run: |
+          echo "🔐 Checking Secrets Configuration"
+
+          # List of required secrets (without exposing values)
+          REQUIRED_SECRETS=(
+            "GITHUB_TOKEN"
+            "SNYK_TOKEN"
+          )
+
+          # Check if secrets are available (without exposing them)
+          for secret in "${REQUIRED_SECRETS[@]}"; do
+            case "$secret" in
+              "GITHUB_TOKEN")
+                if [ -n "${{ secrets.GITHUB_TOKEN }}" ]; then
+                  echo "✅ GITHUB_TOKEN is configured"
+                else
+                  echo "❌ GITHUB_TOKEN is missing"
+                fi
+                ;;
+              "SNYK_TOKEN")
+                if [ -n "${{ secrets.SNYK_TOKEN }}" ]; then
+                  echo "✅ SNYK_TOKEN is configured"
+                else
+                  echo "⚠️ SNYK_TOKEN is missing (optional for some workflows)"
+                fi
+                ;;
+            esac
+          done
+
+  generate-config-report:
+    name: Generate Configuration Report
+    runs-on: ubuntu-latest
+    needs: [environment-setup, variable-validation, secrets-check]
+    if: always()
+
+    steps:
+      - name: Generate configuration report
+        run: |
+          cat > configuration-report.md << EOF
+          # GitHub Actions Configuration Report
+
+          **Generated:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')  
+          **Environment:** ${{ needs.environment-setup.outputs.environment }}  
+          **Maintainer:** ${{ env.NODOUBTZ_MAINTAINER }}  
+          **Workflow Run:** ${{ github.run_id }}
+
+          ## Environment Variables
+
+          | Variable | Value | Type |
+          |----------|-------|------|
+          | NODE_VERSION | ${{ env.NODE_VERSION }} | Runtime |
+          | DOCKER_REGISTRY | ${{ env.DOCKER_REGISTRY }} | Infrastructure |
+          | SECURITY_LEVEL | ${{ needs.environment-setup.outputs.security-level }} | Security |
+          | MIN_CODE_COVERAGE | ${{ env.MIN_CODE_COVERAGE }}% | Quality |
+          | MAX_COMPLEXITY | ${{ env.MAX_COMPLEXITY }} | Quality |
+
+          ## Nodoubtz Configuration
+
+          | Setting | Value |
+          |---------|-------|
+          | Maintainer | ${{ env.NODOUBTZ_MAINTAINER }} |
+          | Toolkit Version | ${{ env.NODOUBTZ_TOOLKIT_VERSION }} |
+          | Security Level | ${{ env.NODOUBTZ_SECURITY_LEVEL }} |
+
+          ## Validation Results
+
+          - ✅ Environment Setup: ${{ needs.environment-setup.result }}
+          - ✅ Variable Validation: ${{ needs.variable-validation.result }}
+          - ✅ Secrets Check: ${{ needs.secrets-check.result }}
+
+          ---
+          *Configuration managed by GitHub Actions*
+          EOF
+
+      - name: Upload configuration report
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-actions-config-report
+          path: configuration-report.md

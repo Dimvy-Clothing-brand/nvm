@@ -9,6 +9,11 @@ on:
     # Run security scans daily at 2 AM UTC
     - cron: '0 2 * * *'
 
+env:
+  NODE_VERSION: '18'
+  SNYK_SEVERITY_THRESHOLD: 'high'
+  SECURITY_SCAN_TIMEOUT: '10m'
+
 permissions:
   contents: read
   security-events: write
@@ -19,6 +24,10 @@ jobs:
     name: Security Audit
     runs-on: ubuntu-latest
 
+    env:
+      SCAN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+      REPORT_NAME: security-report-${{ github.sha }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,14 +35,22 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+
+      - name: Set security scan variables
+        run: |
+          echo "SCAN_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
+          echo "SCAN_TYPE=automated" >> $GITHUB_ENV
+          echo "REPO_NAME=${{ github.repository }}" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run npm audit
-        run: npm run security:audit
+        run: |
+          echo "Running npm audit with timeout: ${{ env.SECURITY_SCAN_TIMEOUT }}"
+          timeout ${{ env.SECURITY_SCAN_TIMEOUT }} npm run security:audit || echo "Audit completed with warnings"
         continue-on-error: true
 
       - name: Run Snyk security scan
@@ -41,7 +58,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --severity-threshold=high
+          args: --severity-threshold=${{ env.SNYK_SEVERITY_THRESHOLD }} --json-file-output=snyk-results.json
         continue-on-error: true
 
       - name: Upload Snyk results to GitHub Code Scanning

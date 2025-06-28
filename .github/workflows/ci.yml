@@ -6,12 +6,44 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  NODE_VERSION: '20'
+  DOCKER_IMAGE_NAME: 'nvm-dev'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      BUILD_NUMBER: ${{ github.run_number }}
+      COMMIT_SHA: ${{ github.sha }}
+
     steps:
       - uses: actions/checkout@v4
+
+      - name: Set up environment variables
+        run: |
+          echo "BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
+          echo "SHORT_SHA=${GITHUB_SHA::8}" >> $GITHUB_ENV
+          echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
       - name: Build Docker image
-        run: docker build -t nvm-dev .
+        run: |
+          docker build \
+            --build-arg BUILD_DATE="${BUILD_DATE}" \
+            --build-arg BUILD_NUMBER="${BUILD_NUMBER}" \
+            --build-arg COMMIT_SHA="${SHORT_SHA}" \
+            --tag ${{ env.DOCKER_IMAGE_NAME }}:${SHORT_SHA} \
+            --tag ${{ env.DOCKER_IMAGE_NAME }}:latest \
+            .
+
       - name: Run tests in container
-        run: docker run --rm nvm-dev bash -c "npm test || true"
+        run: |
+          docker run --rm \
+            -e NODE_ENV=test \
+            -e CI=true \
+            -e GITHUB_ACTIONS=true \
+            ${{ env.DOCKER_IMAGE_NAME }}:latest \
+            bash -c "npm test || true"
