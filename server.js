@@ -7,24 +7,33 @@ const url = require('url');
 const PORT = process.env.PORT || 8000;
 const HOST = '0.0.0.0';
 
-// MIME types
-const mimeTypes = {
-    '.html': 'text/html',
-    '.js': 'text/javascript',
-    '.css': 'text/css',
-    '.json': 'application/json',
-    '.png': 'image/png',
-    '.jpg': 'image/jpg',
-    '.gif': 'image/gif',
-    '.svg': 'image/svg+xml',
-    '.wav': 'audio/wav',
-    '.mp4': 'video/mp4',
-    '.woff': 'application/font-woff',
-    '.ttf': 'application/font-ttf',
-    '.eot': 'application/vnd.ms-fontobject',
-    '.otf': 'application/font-otf',
-    '.wasm': 'application/wasm'
-};
+// Safe MIME type lookup with input validation
+function getMimeType(ext) {
+    // Validate input is a string and starts with dot
+    if (typeof ext !== 'string' || !ext.startsWith('.')) {
+        return 'application/octet-stream';
+    }
+    
+    // Use explicit switch for safer property access
+    switch (ext) {
+        case '.html': return 'text/html';
+        case '.js': return 'text/javascript';
+        case '.css': return 'text/css';
+        case '.json': return 'application/json';
+        case '.png': return 'image/png';
+        case '.jpg': return 'image/jpg';
+        case '.gif': return 'image/gif';
+        case '.svg': return 'image/svg+xml';
+        case '.wav': return 'audio/wav';
+        case '.mp4': return 'video/mp4';
+        case '.woff': return 'application/font-woff';
+        case '.ttf': return 'application/font-ttf';
+        case '.eot': return 'application/vnd.ms-fontobject';
+        case '.otf': return 'application/font-otf';
+        case '.wasm': return 'application/wasm';
+        default: return 'application/octet-stream';
+    }
+}
 
 // Create server
 const server = http.createServer((req, res) => {
@@ -123,7 +132,8 @@ const server = http.createServer((req, res) => {
 // Serve file function
 function serveFile(filePath, res) {
     const ext = path.extname(filePath).toLowerCase();
-    const mimeType = mimeTypes[ext] || 'application/octet-stream';
+    // Get MIME type safely
+    const mimeType = getMimeType(ext);
     
     fs.readFile(filePath, (err, data) => {
         if (err) {
@@ -210,7 +220,7 @@ function handleApiRequest(req, res, pathname) {
 }
 
 // Handle NVM API
-function handleNvmApi(req, res, segments) {
+function handleNvmApi(req, res) {
     const response = {
         message: 'NVM API',
         version: '0.39.0',
@@ -227,7 +237,7 @@ function handleNvmApi(req, res, segments) {
 }
 
 // Handle AI API
-function handleAiApi(req, res, segments) {
+function handleAiApi(req, res) {
     const response = {
         message: 'NVM AI Super Intelligence API',
         status: 'active',
@@ -248,13 +258,28 @@ function handleAiApi(req, res, segments) {
     res.end(JSON.stringify(response, null, 2));
 }
 
-// Format bytes utility
+// Format bytes utility with safe size handling
 function formatBytes(bytes) {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    
+    // Use explicit size mapping for security
+    let size = 'Bytes';
+    let sizeIndex = 0;
+    
+    if (i >= 3) {
+        size = 'GB';
+        sizeIndex = 3;
+    } else if (i >= 2) {
+        size = 'MB';
+        sizeIndex = 2;
+    } else if (i >= 1) {
+        size = 'KB';
+        sizeIndex = 1;
+    }
+    
+    return parseFloat((bytes / Math.pow(k, sizeIndex)).toFixed(2)) + ' ' + size;
 }
 
 // Error handling

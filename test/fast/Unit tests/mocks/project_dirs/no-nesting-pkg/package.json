@@ -1,0 +1,5 @@
+{
+  "name": "test-mock-no-nesting-pkg",
+  "version": "1.0.0",
+  "description": "Test mock package for no nesting package configuration"
+}
